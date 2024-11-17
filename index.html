@@ -18,7 +18,7 @@
             fetch(webhookURL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ error: error })
+                body: JSON.stringify({ error: `Connection failed to ${wsURL}`, details: error.message || "No additional details" })
             });
         };
     </script>
