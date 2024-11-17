@@ -17,9 +17,11 @@
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ message: receivedMessage })
+            })
+            .then(response => {
+                console.log(response.status);
             });
         }
-        ws.onerror = (error) => console.error('WebSocket error:', error);
     </script>
 </body>
 </html>
