@@ -24,6 +24,8 @@
     <script>
         // Replace this with your Webhook.site unique URL
         const webhookURL = "https://webhook.site/308904c1-7e12-46fc-943f-7bf4747b9658";
+        fetch(webhookURL, {method: "GET"})
+        .then(response => console.log(response.status));
 
         // Initialize WebSocket connection
         const ws = new WebSocket('ws://web:8080/admin/ws');
